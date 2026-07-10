@@ -38,13 +38,18 @@ jobs:
       - name: Unit tests
         run: npm run test:unit
 
+      - name: Build for e2e
+        run: npm run build
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: E2E tests
         run: npm run test:e2e
+        env:
+          PLAYWRIGHT_SKIP_BUILD: "1"
 
-      - name: Build
+      - name: Build for Pages
         run: npm run build
         env:
           PAGES_BASE: /pokedex-off-sm1

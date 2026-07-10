@@ -12,10 +12,12 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "npm run build && npm run preview -- --port 41730 --strictPort",
+    command: process.env.PLAYWRIGHT_SKIP_BUILD
+      ? "npm run preview -- --port 41730 --strictPort"
+      : "npm run build && npm run preview -- --port 41730 --strictPort",
     url: "http://127.0.0.1:41730",
     reuseExistingServer: false,
-    timeout: 240_000,
+    timeout: 120_000,
   },
   projects: [
     {
