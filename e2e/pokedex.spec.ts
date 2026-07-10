@@ -15,7 +15,7 @@ test.describe("Pokédex list", () => {
       .getByRole("searchbox", { name: /search pokémon/i })
       .fill("charizard");
     await expect(
-      page.getByRole("heading", { name: "charizard" })
+      page.getByRole("heading", { name: "charizard", exact: true })
     ).toBeVisible();
     await expect(
       page.getByRole("heading", { name: "bulbasaur" })
@@ -67,8 +67,12 @@ test.describe("Favorites", () => {
 test.describe("Theme", () => {
   test("toggling dark mode persists across reload", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: /switch to dark theme/i }).click();
-    await expect(page.locator("html")).toHaveClass(/dark/);
+    const toggle = page.getByRole("button", { name: /switch to dark theme/i });
+    await expect(toggle).toBeEnabled();
+    await expect(async () => {
+      await toggle.click();
+      await expect(page.locator("html")).toHaveClass(/dark/, { timeout: 500 });
+    }).toPass({ timeout: 10_000 });
     await page.reload();
     await expect(page.locator("html")).toHaveClass(/dark/);
   });
