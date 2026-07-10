@@ -15,7 +15,7 @@ export default defineConfig({
     command: "npm run build && npm run preview -- --port 41730 --strictPort",
     url: "http://127.0.0.1:41730",
     reuseExistingServer: false,
-    timeout: 120_000,
+    timeout: 240_000,
   },
   projects: [
     {
