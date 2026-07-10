@@ -1,0 +1,19 @@
+pre-commit:
+  parallel: false
+  commands:
+    lint:
+      glob: "*.{js,ts,svelte}"
+      run: npx ultracite fix {staged_files}
+      stage_fixed: true
+    format:
+      glob: "*.{js,ts,svelte,json,css,md}"
+      run: npx oxfmt {staged_files}
+      stage_fixed: true
+    typecheck:
+      glob: "*.{js,ts,svelte}"
+      run: npm run check
+
+pre-push:
+  commands:
+    test:
+      run: npm run test
