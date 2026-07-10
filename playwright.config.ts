@@ -13,8 +13,8 @@ export default defineConfig({
   },
   webServer: {
     command: process.env.PLAYWRIGHT_SKIP_BUILD
-      ? "npm run preview -- --port 41730 --strictPort"
-      : "npm run build && npm run preview -- --port 41730 --strictPort",
+      ? "npm run preview -- --host 127.0.0.1 --port 41730 --strictPort"
+      : "npm run build && npm run preview -- --host 127.0.0.1 --port 41730 --strictPort",
     url: "http://127.0.0.1:41730",
     reuseExistingServer: false,
     timeout: 120_000,
