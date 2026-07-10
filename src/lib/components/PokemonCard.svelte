@@ -6,7 +6,7 @@
 	import { typeColor } from '$lib/constants/types';
 	import type { Pokemon } from '$lib/api/schemas';
 
-	let { pokemon }: { pokemon: Pokemon } = $props();
+	let { pokemon, eager = false }: { pokemon: Pokemon; eager?: boolean } = $props();
 
 	const artwork = $derived(
 		pokemon.sprites.other?.['official-artwork']?.front_default ??
@@ -27,7 +27,7 @@
 		>#{pokemon.id.toString().padStart(3, '0')}</span
 	>
 	<div class="my-2 h-24 w-24 transition-transform duration-200 group-hover:scale-110">
-		<PokemonImage src={artwork} alt={pokemon.name} size={96} />
+		<PokemonImage src={artwork} alt={pokemon.name} size={96} {eager} />
 	</div>
 	<h2 class="font-semibold capitalize">{pokemon.name}</h2>
 	<div class="mt-2 flex gap-1">

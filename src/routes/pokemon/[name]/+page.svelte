@@ -119,7 +119,7 @@
 								aria-pressed={activeSprite === variant.key}
 								class="rounded-full border px-3 py-1 text-xs transition-colors {activeSprite ===
 								variant.key
-									? 'border-red-500 bg-red-500 text-white'
+									? 'border-red-600 bg-red-600 text-white'
 									: 'border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'}"
 							>
 								{variant.label}

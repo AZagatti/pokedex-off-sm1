@@ -33,7 +33,7 @@
 				<a
 					href={link.href}
 					class="rounded-full px-3 py-1.5 font-medium text-sm transition-colors {isActive(link.href)
-						? 'bg-red-500 text-white'
+						? 'bg-red-600 text-white'
 						: 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'}"
 					aria-current={isActive(link.href) ? 'page' : undefined}
 				>

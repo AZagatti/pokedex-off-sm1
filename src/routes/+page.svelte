@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getGeneration, getPokemon, getType, typeNames } from '$lib/api/client';
+	import { getGeneration, getPokemon, getType, idFromUrl, typeNames } from '$lib/api/client';
 	import FilterToolbar from '$lib/components/FilterToolbar.svelte';
 	import PokemonCard from '$lib/components/PokemonCard.svelte';
 	import SkeletonCard from '$lib/components/SkeletonCard.svelte';
@@ -7,7 +7,7 @@
 	import type { NamedApiResource, Pokemon } from '$lib/api/schemas';
 	import type { PageProps } from './$types';
 
-	let { data }: PageProps = $props();
+	const { data }: PageProps = $props();
 
 	const PAGE_SIZE = 30;
 	const allTypes = typeNames().filter((t) => t !== 'unknown' && t !== 'stellar');
@@ -22,7 +22,9 @@
 	let typeNameSets = $state<Map<string, Set<string>>>(new Map());
 
 	let loadedCount = $state(PAGE_SIZE);
-	let details = $state<Map<string, Pokemon>>(new Map());
+	let details = $state<Map<string, Pokemon>>(
+		new Map(data.initialPokemon.map((p) => [p.name, p]))
+	);
 	let loadingNames = new Set<string>();
 	let sentinel: HTMLDivElement | undefined;
 
@@ -124,18 +126,21 @@
 		}
 	});
 
+	// In "dex" mode, slots are pre-sorted by id (known synchronously from the
+	// resource url, no fetch needed) so a card loading in never reshuffles
+	// already-rendered siblings — this avoids layout shift entirely. In
+	// "stats" mode, loaded cards must resort by total once fetched, which
+	// can shift content as more finish loading — an accepted tradeoff there.
+	const stableSlots = $derived.by(() => {
+		const ordered = visibleNames.toSorted((a, b) => idFromUrl(a.url) - idFromUrl(b.url));
+		return ordered.map((n) => ({ name: n.name, pokemon: details.get(n.name) ?? null }));
+	});
+
 	const loadedPokemon = $derived.by((): Pokemon[] => {
 		const list = visibleNames
 			.map((n) => details.get(n.name))
 			.filter((p): p is Pokemon => Boolean(p));
-
-		const sorted = [...list];
-		if (sort === 'dex') {
-			sorted.sort((a, b) => a.id - b.id);
-		} else {
-			sorted.sort((a, b) => statTotal(b) - statTotal(a));
-		}
-		return sorted;
+		return list.toSorted((a, b) => statTotal(b) - statTotal(a));
 	});
 
 	const pendingCount = $derived(visibleNames.length - loadedPokemon.length);
@@ -163,6 +168,14 @@
 		name="description"
 		content="Browse, search and filter every Pokémon with an animated, modern Pokédex built on SvelteKit."
 	/>
+	{#if data.initialPokemon[0]}
+		{@const lcpArtwork =
+			data.initialPokemon[0].sprites.other?.['official-artwork']?.front_default ??
+			data.initialPokemon[0].sprites.front_default}
+		{#if lcpArtwork}
+			<link rel="preload" as="image" href={lcpArtwork} fetchpriority="high" />
+		{/if}
+	{/if}
 </svelte:head>
 
 <h1 class="sr-only">Pokédex — browse all Pokémon</h1>
@@ -176,12 +189,22 @@
 	</div>
 {:else}
 	<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-		{#each loadedPokemon as pokemon (pokemon.name)}
-			<PokemonCard {pokemon} />
-		{/each}
-		{#each Array.from({ length: pendingCount }) as _, i (i)}
-			<SkeletonCard />
-		{/each}
+		{#if sort === 'dex'}
+			{#each stableSlots as slot, i (slot.name)}
+				{#if slot.pokemon}
+					<PokemonCard pokemon={slot.pokemon} eager={i < 5} />
+				{:else}
+					<SkeletonCard />
+				{/if}
+			{/each}
+		{:else}
+			{#each loadedPokemon as pokemon, i (pokemon.name)}
+				<PokemonCard {pokemon} eager={i < 5} />
+			{/each}
+			{#each Array.from({ length: pendingCount }) as _, i (i)}
+				<SkeletonCard />
+			{/each}
+		{/if}
 	</div>
 {/if}
 

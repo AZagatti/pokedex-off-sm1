@@ -46,7 +46,7 @@
 		<p class="text-sm">Tap the heart on any Pokémon to save it here.</p>
 		<a
 			href={`${base}/`}
-			class="mt-2 rounded-full bg-red-500 px-5 py-2 font-medium text-white transition-transform hover:scale-105"
+			class="mt-2 rounded-full bg-red-600 px-5 py-2 font-medium text-white transition-transform hover:scale-105"
 		>
 			Browse the Pokédex
 		</a>

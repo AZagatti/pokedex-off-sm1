@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GENERATIONS, typeColor } from '$lib/constants/types';
+	import { GENERATIONS, typeBadgeColor, typeColor } from '$lib/constants/types';
 	import { Search, X } from 'lucide-svelte';
 
 	let {
@@ -97,8 +97,8 @@
 				aria-pressed={active}
 				class="rounded-full px-2.5 py-1 font-medium text-xs capitalize transition-all"
 				style={active
-					? `background-color: ${typeColor(type)}; color: white; box-shadow: 0 0 0 2px ${typeColor(type)}55`
-					: `background-color: ${typeColor(type)}22; color: ${typeColor(type)}`}
+					? `background-color: ${typeBadgeColor(type)}; color: white; box-shadow: 0 0 0 2px ${typeColor(type)}55`
+					: `background-color: ${typeColor(type)}22; color: ${typeBadgeColor(type)}`}
 			>
 				{type}
 			</button>

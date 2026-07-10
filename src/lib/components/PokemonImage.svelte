@@ -14,9 +14,10 @@
 		width={size}
 		height={size}
 		loading={eager ? 'eager' : 'lazy'}
+		fetchpriority={eager ? 'high' : 'low'}
 		decoding="async"
-		class="mx-auto h-auto object-contain drop-shadow-md"
-		style="max-width: {size}px"
+		class="mx-auto object-contain drop-shadow-md"
+		style="max-width: {size}px; aspect-ratio: 1 / 1"
 	/>
 {:else}
 	<div

@@ -26,6 +26,23 @@ export function typeColor(type: string): string {
   return TYPE_COLORS[type] ?? TYPE_COLORS.unknown;
 }
 
+// White text on the raw palette above fails WCAG contrast for several
+// (lighter) types — darken uniformly for anywhere text sits directly on the
+// type color, while `typeColor` keeps the true palette for gradients/tints.
+const BADGE_DARKEN_FACTOR = 0.45;
+
+function darkenChannel(channel: number): number {
+  return Math.round(channel * BADGE_DARKEN_FACTOR);
+}
+
+export function typeBadgeColor(type: string): string {
+  const hex = typeColor(type).replace("#", "");
+  const r = Number.parseInt(hex.slice(0, 2), 16);
+  const g = Number.parseInt(hex.slice(2, 4), 16);
+  const b = Number.parseInt(hex.slice(4, 6), 16);
+  return `rgb(${darkenChannel(r)}, ${darkenChannel(g)}, ${darkenChannel(b)})`;
+}
+
 export const GENERATIONS = [
   { id: 1, name: "Generation I" },
   { id: 2, name: "Generation II" },
